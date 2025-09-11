@@ -42,10 +42,19 @@ STARTING_LETTER_LIST = letter_pool_as_list()
 MAX_INDEX_LETTER_LIST = len(STARTING_LETTER_LIST) - 1
 
 def draw_letters():
-    pass
-    # tiles = []
-    # while len(tiles) < 11:
-    #     tiles.append(STARTING_LETTER_LIST[])
+    tiles = []
+
+    while len(tiles) < 10:
+        random_index = randint(0, MAX_INDEX_LETTER_LIST)
+        letter = STARTING_LETTER_LIST[random_index]
+
+        if tiles.count(letter) < LETTER_POOL[letter]:
+            tiles.append(letter)
+
+        else:
+            continue
+
+    return tiles
 
 def uses_available_letters(word, letter_bank):
     pass
