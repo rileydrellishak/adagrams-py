@@ -102,8 +102,30 @@ def score_word(word):
     
     for letter in word.upper():
         score += SCORE_CHART[letter]
-        
+
     return score
 
 def get_highest_word_score(word_list):
-    pass
+    leaderboard = {}
+    for word in word_list:
+        leaderboard[word] = score_word(word)
+    
+    best_word = word_list[0]
+    highest_score = leaderboard[best_word]
+
+    for word, score in leaderboard.items():
+        if score > highest_score:
+            best_word = word
+            highest_score = score
+        # If the score is the same as current high score
+        # and the current word is not the best word
+        if score == highest_score and word != best_word:
+            best_word_length = len(best_word)
+            current_word_length = len(word)
+            # If the length of best word is greater than length
+            # of current word, best_word gets replaced
+            if best_word_length > current_word_length:
+                best_word = word
+
+            
+    return best_word, highest_score
