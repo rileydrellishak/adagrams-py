@@ -57,12 +57,13 @@ def draw_letters():
     return tiles
 
 def uses_available_letters(word, letter_bank):
-    letters_left = letter_bank
-    for letter in word:
+    capitalize_word = word.upper()
+    for letter in capitalize_word:
         if letter not in letter_bank:
             return False
         else:
-            letters_left.remove(letter)
+            if capitalize_word.count(letter) > letter_bank.count(letter):
+                return False
     return True
 
 def score_word(word):
