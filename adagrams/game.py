@@ -117,15 +117,14 @@ def get_highest_word_score(word_list):
         if score > highest_score:
             best_word = word
             highest_score = score
+        # Tie in score!
         # If the score is the same as current high score
         # and the current word is not the best word
         if score == highest_score and word != best_word:
-            best_word_length = len(best_word)
-            current_word_length = len(word)
+
+            if len(best_word) > len(word):
             # If the length of best word is greater than length
-            # of current word, best_word gets replaced
-            if best_word_length > current_word_length:
+            # of current word, best_word gets replaced with current.
                 best_word = word
 
-            
     return best_word, highest_score
