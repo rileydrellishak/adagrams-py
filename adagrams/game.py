@@ -57,7 +57,13 @@ def draw_letters():
     return tiles
 
 def uses_available_letters(word, letter_bank):
-    pass
+    letters_left = letter_bank
+    for letter in word:
+        if letter not in letter_bank:
+            return False
+        else:
+            letters_left.remove(letter)
+    return True
 
 def score_word(word):
     pass
