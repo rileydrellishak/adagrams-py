@@ -122,9 +122,16 @@ def get_highest_word_score(word_list):
         # and the current word is not the best word
         if score == highest_score and word != best_word:
 
-            if len(best_word) > len(word):
+            if len(best_word) > len(word) and len(best_word) != 10:
             # If the length of best word is greater than length
             # of current word, best_word gets replaced with current.
+            # Unless the length of the current best word is 10, then it
+            # will assign a new best word
                 best_word = word
+            elif len(word) == 10:
+            # Elif the length of the current word is 10, 
+            # reassign it to best word
+                best_word = word
+
 
     return best_word, highest_score
