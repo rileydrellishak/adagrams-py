@@ -114,14 +114,24 @@ def create_leaderboard(word_list):
     return leaderboard
 
 def check_for_all_way_tie(leaderboard):
-
     all_way_tie = False
     scores = list(leaderboard.values())
+
     for i in range(1, len(scores)):
         if scores[i - 1] == scores[i]:
             all_way_tie = True
     
     return all_way_tie
+
+def check_for_all_same_length(leaderboard):
+    all_same_length = False
+    lengths = list(leaderboard.keys())
+
+    for i in range(1, len(lengths)):
+        if lengths[i - 1] == lengths[i]:
+            return True
+        
+    return all_same_length
 
 def get_highest_word_score(word_list):
     leaderboard = create_leaderboard(word_list)
@@ -131,7 +141,10 @@ def get_highest_word_score(word_list):
     highest_score = leaderboard[best_word]
 
     all_way_tie = check_for_all_way_tie(leaderboard)
-    if not all_way_tie:
+    all_same_length = check_for_all_same_length(leaderboard)
+
+    if not all_way_tie and not all_same_length:
+    # If all the scores are different and all the words are different lengths
         for current_word, score in leaderboard.items():
             if score > highest_score:
                 best_word = current_word
@@ -152,5 +165,13 @@ def get_highest_word_score(word_list):
                 # reassign it to best word
                     best_word = current_word
 
-
+    if all_way_tie and not all_same_length:
+    # If all the scores are the same and the lengths of words are different
+        for current_word in leaderboard.keys():
+            if best_word == current_word:
+                continue
+            if len(current_word) < len(best_word) and len(best_word) != 10:
+                best_word = current_word
+            elif len(best_word) == 10:
+                break
     return best_word, highest_score
