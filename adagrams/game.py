@@ -229,7 +229,7 @@ def find_first_ten_letter_word(word_list):
     for word in word_list:
         if len(word) == 10:
             return word
-        
+
 def get_shortest_word(word_list):
     """Determining the shortest word in the list of words.
 
@@ -266,7 +266,7 @@ def get_tied_words(highest_score, leaderboard):
     return tied_words
 
 def get_highest_word_score(word_list):
-    """Determines the highest scoring word from a list of words.
+    """Determines the highest scoring word from a list of words, accounting for all tie breaking conditions.
 
     Args:
         word_list (list): List of words the player has submitted.
@@ -285,7 +285,7 @@ def get_highest_word_score(word_list):
             if score == highest_score:
                 best_word = word
     
-    elif tie_for_highest_score:
+    else:
         tied_words = get_tied_words(highest_score, leaderboard)
 
         ten_letter_word_in_tie = check_for_ten_letter_word(tied_words)
@@ -297,8 +297,7 @@ def get_highest_word_score(word_list):
         elif not ten_letter_word_in_tie and all_same_length:
             best_word = tied_words[0]
 
-        elif not ten_letter_word_in_tie and not all_same_length:
+        else:
             best_word = get_shortest_word(tied_words)
-
 
     return best_word, leaderboard[best_word]
