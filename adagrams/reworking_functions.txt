@@ -1,0 +1,41 @@
+leaderboard = create_leaderboard(word_list)
+
+    # Start at the first item of dictionary
+    best_word = word_list[0]
+    highest_score = leaderboard[best_word]
+
+    all_way_tie = check_for_all_way_tie(leaderboard)
+    all_same_length = check_for_all_same_length(leaderboard)
+
+    if not all_way_tie and not all_same_length:
+    # If all the scores are different and all the words are different lengths
+        for current_word, score in leaderboard.items():
+            if score > highest_score:
+                best_word = current_word
+                highest_score = score
+            # Tie in score!
+            # If the score is the same as current high score
+            # and the current word is not the best word
+            if score == highest_score and current_word != best_word:
+
+                if len(best_word) > len(current_word) and len(best_word) != 10:
+                # If the length of best word is greater than length
+                # of current word, best_word gets replaced with current.
+                # Unless the length of the current best word is 10, then it
+                # will assign a new best word
+                    best_word = current_word
+                elif len(current_word) == 10:
+                # Elif the length of the current word is 10, 
+                # reassign it to best word
+                    best_word = current_word
+
+    if all_way_tie and not all_same_length:
+    # If all the scores are the same and the lengths of words are different
+        for current_word in leaderboard.keys():
+            if best_word == current_word:
+                continue
+            if len(current_word) < len(best_word) and len(best_word) != 10:
+                best_word = current_word
+            elif len(best_word) == 10:
+                break
+    return best_word, highest_score

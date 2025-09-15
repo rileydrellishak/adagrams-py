@@ -63,8 +63,7 @@ def letter_pool_as_list():
     for letter, frequency in LETTER_POOL.items():
         for i in range(0, frequency):
             letter_pool_list.append(letter)
-    
-    # print(letter_pool_list)
+
     return letter_pool_list
 
 STARTING_LETTER_LIST = letter_pool_as_list()
@@ -124,54 +123,89 @@ def check_for_all_way_tie(leaderboard):
     return all_way_tie
 
 def check_for_all_same_length(leaderboard):
-    all_same_length = False
-    lengths = list(leaderboard.keys())
+    words = list(leaderboard.keys())
+    lengths = []
 
-    for i in range(1, len(lengths)):
-        if lengths[i - 1] == lengths[i]:
+    for word in words:
+        lengths.append(len(word))
+
+    if lengths.count(lengths[0]) == len(lengths):
+        return True
+    
+    return False
+
+def highest_score_no_ties(scores):
+    highest_score = scores[0]
+    for i in range(1, len(scores)):
+        if scores[i] > highest_score:
+            highest_score = scores[i]
+
+    return highest_score
+
+def check_for_ten_letter_word(words):
+    for word in words:
+        if len(word) == 10:
             return True
         
-    return all_same_length
+    return False
+
+def highest_score_depends_on_word_length(words):
+    best_word = words[0]
+
+    ten_letter_word_present = check_for_ten_letter_word(words)
+
+    for word in words:
+        if word == best_word:
+            continue
+
+        elif len(word) < len(best_word) and not ten_letter_word_present:
+            best_word = word
+
+        elif ten_letter_word_present:
+            for word in words:
+                if len(word) == 10:
+                    best_word = word
+
+    return best_word
+
+def find_first_ten_letter_word(word_list):
+    for word in word_list:
+        if len(word) == 10:
+            return word
+        
+def get_shortest_word(word_list):
+
+    shortest_word = "AAAAAAAAAA"
+    for word in word_list:
+        if len(word) < len(shortest_word):
+            shortest_word = word
+
+    return shortest_word
 
 def get_highest_word_score(word_list):
     leaderboard = create_leaderboard(word_list)
+    scores = list(leaderboard.values())
 
-    # Start at the first item of dictionary
     best_word = word_list[0]
-    highest_score = leaderboard[best_word]
+    highest_score = scores[0]
 
     all_way_tie = check_for_all_way_tie(leaderboard)
-    all_same_length = check_for_all_same_length(leaderboard)
+    words_same_length = check_for_all_same_length(leaderboard)
+    ten_letter_word_present = check_for_ten_letter_word(word_list)
 
-    if not all_way_tie and not all_same_length:
-    # If all the scores are different and all the words are different lengths
-        for current_word, score in leaderboard.items():
-            if score > highest_score:
-                best_word = current_word
-                highest_score = score
-            # Tie in score!
-            # If the score is the same as current high score
-            # and the current word is not the best word
-            if score == highest_score and current_word != best_word:
+    if (not all_way_tie) and (not words_same_length):
+        highest_score = highest_score_no_ties(scores)
+        index_highest_score = scores.index(highest_score)
+        best_word = word_list[index_highest_score]
 
-                if len(best_word) > len(current_word) and len(best_word) != 10:
-                # If the length of best word is greater than length
-                # of current word, best_word gets replaced with current.
-                # Unless the length of the current best word is 10, then it
-                # will assign a new best word
-                    best_word = current_word
-                elif len(current_word) == 10:
-                # Elif the length of the current word is 10, 
-                # reassign it to best word
-                    best_word = current_word
+    elif (all_way_tie):
+        if words_same_length and ten_letter_word_present:
+            best_word = word_list[0]
 
-    if all_way_tie and not all_same_length:
-    # If all the scores are the same and the lengths of words are different
-        for current_word in leaderboard.keys():
-            if best_word == current_word:
-                continue
-            if len(current_word) < len(best_word) and len(best_word) != 10:
-                best_word = current_word
-            elif len(best_word) == 10:
-                break
-    return best_word, highest_score
+        elif not words_same_length and ten_letter_word_present:
+            best_word = find_first_ten_letter_word(word_list)
+
+        elif not words_same_length and not ten_letter_word_present:
+            best_word = get_shortest_word(word_list)
+
+    return best_word, leaderboard[best_word]
