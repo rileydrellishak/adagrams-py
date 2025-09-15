@@ -59,6 +59,14 @@ SCORE_CHART = {
 }
 
 def letter_pool_as_list():
+    """Creates a list of the available letters.
+
+    Args:
+        none
+    
+    Returns:
+        list: letter_pool_list (list of strings)
+    """
     letter_pool_list = []
     for letter, frequency in LETTER_POOL.items():
         for i in range(0, frequency):
@@ -70,6 +78,14 @@ STARTING_LETTER_LIST = letter_pool_as_list()
 MAX_INDEX_LETTER_LIST = len(STARTING_LETTER_LIST) - 1
 
 def draw_letters():
+    """Simulates drawing 10 tiles from a pile. Accounts for letter distribution.
+
+    Args:
+        None
+
+    Returns:
+        list: tiles (list of strings)
+    """
     tiles = []
 
     while len(tiles) < 10:
@@ -85,6 +101,15 @@ def draw_letters():
     return tiles
 
 def uses_available_letters(word, letter_bank):
+    """Checks if a word only uses letters from a player's letter bank.
+
+    Args:
+        word (str): The word submitted by the player.
+        letter_bank (list): The list of letters the player has from drawing 10 tiles.
+
+    Returns:
+        bool: True if all letters are from letter pool selected. False if not.
+    """
     capitalize_word = word.upper()
     for letter in capitalize_word:
         if letter not in letter_bank:
@@ -95,6 +120,14 @@ def uses_available_letters(word, letter_bank):
     return True
 
 def score_word(word):
+    """Calculate the score for a word.
+
+    Args:
+        word (str): The word submitted by a player.
+
+    Returns
+        int: score of word based on scoring guidelines for each letter.
+    """
     score = 0
     if len(word) >= 7:
         score += 8
@@ -105,6 +138,14 @@ def score_word(word):
     return score
 
 def create_leaderboard(word_list):
+    """Creates a dictionary of words and their respective scores.
+
+    Args:
+        word_list (list): List of words submitted by player.
+
+    Returns:
+        dictionary: leaderboard, where keys are the words and their values are the scores.
+    """
     leaderboard = {}
 
     for word in word_list:
@@ -112,26 +153,15 @@ def create_leaderboard(word_list):
 
     return leaderboard
 
-def check_for_all_way_tie(leaderboard):
-    scores = list(leaderboard.values())
-    if scores.count(scores[0]) == len(scores):
-        return True
-    else:
-        return False
+def find_maximum_score(scores):
+    """Finds the maximum score in a list of scores.
 
-def check_for_all_same_length(leaderboard):
-    words = list(leaderboard.keys())
-    lengths = []
+    Args:
+        scores (list): The list of scores a player has achieved.
 
-    for word in words:
-        lengths.append(len(word))
-
-    if lengths.count(lengths[0]) == len(lengths):
-        return True
-    
-    return False
-
-def highest_score_no_ties(scores):
+    Returns
+        int: highest_score. The maximum value in the list of scores.
+    """
     highest_score = 0
     for score in scores:
         if score > highest_score:
@@ -139,23 +169,105 @@ def highest_score_no_ties(scores):
 
     return highest_score
 
-def check_for_ten_letter_word(words):
-    for word in words:
+def check_for_high_score_tie(scores):
+    """Determines if there is a tie for highest score.
+
+    Args:
+        scores (list): A list of scores the player has achieved.
+
+    Returns:
+        bool: True if there is a tie for maximum score, False if all scores are unique values.
+    """
+    highest_score = find_maximum_score(scores)
+    if scores.count(highest_score) > 1:
+        return True
+    else:
+        return False
+
+def check_for_all_same_length(word_list):
+    """Determines if words are the same length. Use only if there is a tie for highest score.
+
+    Args:
+        words (list): A list of words submitted by the player.
+
+    Returns:
+        bool: True if the highest score word has same length as other words it is tied with for highest score.
+    """
+    lengths = []
+
+    for word in word_list:
+        lengths.append(len(word))
+
+    if lengths.count(lengths[0]) == len(lengths):
+        return True
+    
+    return False
+
+def check_for_ten_letter_word(word_list):
+    """Determines if there is a ten letter word in the list of words.
+
+    Args:
+        words (list): A list of words submitted by the player.
+
+    Returns:
+        bool: True if there is at least one ten letter word, False if no ten letter words exist in the list.
+    """
+    for word in word_list:
         if len(word) == 10:
             return True
         
     return False
 
-def highest_score_depends_on_word_length(words):
-    best_word = words[0]
 
-    ten_letter_word_present = check_for_ten_letter_word(words)
+def find_first_ten_letter_word(word_list):
+    """When there is a tie among scores and multiple ten letter words that are tied for first, selects the first ten letter word from the word_list.
 
-    for word in words:
+    Args:
+        word_list
+    
+    Returns:
+        str: word. Returns the first word in the list that has a length of 10 letters.
+    """
+    for word in word_list:
+        if len(word) == 10:
+            return word
+        
+def get_shortest_word(word_list):
+    """Determining the shortest word in the list of words.
+
+    Args:
+        word_list (list): List of words the player has submitted.
+    
+    Returns
+        str: shortest_word. The string with the shortest length in the word_list.
+    """
+
+    shortest_word = word_list[0]
+    for word in word_list:
+        if len(word) < len(shortest_word):
+            shortest_word = word
+
+    return shortest_word
+
+def highest_score_depends_on_word_length(word_list):
+    """Determines the highest score when there is a tie for highest score and the winner depends on the length of the word.
+
+    Args:
+        words (list): A list of words the player has submitted.
+
+    Returns:
+        str: best_word. Returns the best word based on scoring conditions when scores are tied.
+    """
+    best_word = word_list[0]
+
+    ten_letter_word_present = check_for_ten_letter_word(word_list)
+    shortest_word = get_shortest_word(word_list)
+
+    for word in word_list:
         if word == best_word:
             continue
 
-        elif len(word) < len(best_word) and not ten_letter_word_present:
+        elif word == shortest_word and not ten_letter_word_present:
             best_word = word
 
         elif ten_letter_word_present:
@@ -165,20 +277,6 @@ def highest_score_depends_on_word_length(words):
 
     return best_word
 
-def find_first_ten_letter_word(word_list):
-    for word in word_list:
-        if len(word) == 10:
-            return word
-        
-def get_shortest_word(word_list):
-
-    shortest_word = "AAAAAAAAAA"
-    for word in word_list:
-        if len(word) < len(shortest_word):
-            shortest_word = word
-
-    return shortest_word
-
 def get_highest_word_score(word_list):
     leaderboard = create_leaderboard(word_list)
     scores = list(leaderboard.values())
@@ -186,14 +284,15 @@ def get_highest_word_score(word_list):
     best_word = word_list[0]
     highest_score = scores[0]
 
-    all_way_tie = check_for_all_way_tie(leaderboard)
-    words_same_length = check_for_all_same_length(leaderboard)
+    all_way_tie = check_for_high_score_tie(scores)
+    words_same_length = check_for_all_same_length(word_list)
     ten_letter_word_present = check_for_ten_letter_word(word_list)
 
     if (not all_way_tie) and (not words_same_length):
-        highest_score = highest_score_no_ties(scores)
+        highest_score = find_maximum_score(scores)
         if scores.count(highest_score) > 1:
-            # then you have to do depends on length
+            # If there is a tie for highest score, 
+            # then winner depends on length
             best_word = highest_score_depends_on_word_length(word_list)
         else:
             index_highest_score = scores.index(highest_score)
