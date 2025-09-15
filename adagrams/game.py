@@ -169,16 +169,15 @@ def find_maximum_score(scores):
 
     return highest_score
 
-def check_for_high_score_tie(scores):
+def check_for_high_score_tie(highest_score, scores):
     """Determines if there is a tie for highest score.
 
     Args:
         scores (list): A list of scores the player has achieved.
 
     Returns:
-        bool: True if there is a tie for maximum score, False if all scores are unique values.
+        bool: True if there is a tie for maximum score, False if the maximum score is a unique value.
     """
-    highest_score = find_maximum_score(scores)
     if scores.count(highest_score) > 1:
         return True
     else:
@@ -218,7 +217,6 @@ def check_for_ten_letter_word(word_list):
         
     return False
 
-
 def find_first_ten_letter_word(word_list):
     """When there is a tie among scores and multiple ten letter words that are tied for first, selects the first ten letter word from the word_list.
 
@@ -249,64 +247,58 @@ def get_shortest_word(word_list):
 
     return shortest_word
 
-def highest_score_depends_on_word_length(word_list):
-    """Determines the highest score when there is a tie for highest score and the winner depends on the length of the word.
+def get_tied_words(highest_score, leaderboard):
+    """Creates a list of the words that are tied for highest score.
 
     Args:
-        words (list): A list of words the player has submitted.
+        highest_score (int): The score the words have in common
+        leaderboard (dict): Finds the words (keys) that have a score (value) of the highest score.
 
     Returns:
-        str: best_word. Returns the best word based on scoring conditions when scores are tied.
+        list: tied_words. A list of all the words that have the same score and the score is the maximum score.
     """
-    best_word = word_list[0]
+    tied_words = []
 
-    ten_letter_word_present = check_for_ten_letter_word(word_list)
-    shortest_word = get_shortest_word(word_list)
+    for word in leaderboard.keys():
+        if leaderboard[word] == highest_score:
+            tied_words.append(word)
 
-    for word in word_list:
-        if word == best_word:
-            continue
-
-        elif word == shortest_word and not ten_letter_word_present:
-            best_word = word
-
-        elif ten_letter_word_present:
-            for word in words:
-                if len(word) == 10:
-                    best_word = word
-
-    return best_word
+    return tied_words
 
 def get_highest_word_score(word_list):
+    """Determines the highest scoring word from a list of words.
+
+    Args:
+        word_list (list): List of words the player has submitted.
+    
+    Returns:
+        tuple: best_word, leaderboard[best_word] (score). Finds best_word key in the leaderboard and returns the key and its value.
+    """
     leaderboard = create_leaderboard(word_list)
     scores = list(leaderboard.values())
+    highest_score = find_maximum_score(scores)
 
-    best_word = word_list[0]
-    highest_score = scores[0]
+    tie_for_highest_score = check_for_high_score_tie(highest_score, scores)
 
-    all_way_tie = check_for_high_score_tie(scores)
-    words_same_length = check_for_all_same_length(word_list)
-    ten_letter_word_present = check_for_ten_letter_word(word_list)
+    if not tie_for_highest_score:
+        for word, score in leaderboard.items():
+            if score == highest_score:
+                best_word = word
+    
+    elif tie_for_highest_score:
+        tied_words = get_tied_words(highest_score, leaderboard)
 
-    if (not all_way_tie) and (not words_same_length):
-        highest_score = find_maximum_score(scores)
-        if scores.count(highest_score) > 1:
-            # If there is a tie for highest score, 
-            # then winner depends on length
-            best_word = highest_score_depends_on_word_length(word_list)
-        else:
-            index_highest_score = scores.index(highest_score)
-            best_word = word_list[index_highest_score]
+        ten_letter_word_in_tie = check_for_ten_letter_word(tied_words)
+        all_same_length = check_for_all_same_length(tied_words)
 
+        if ten_letter_word_in_tie:
+            best_word = find_first_ten_letter_word(tied_words)
 
-    elif (all_way_tie):
-        if words_same_length and ten_letter_word_present:
-            best_word = word_list[0]
+        elif not ten_letter_word_in_tie and all_same_length:
+            best_word = tied_words[0]
 
-        elif not words_same_length and ten_letter_word_present:
-            best_word = find_first_ten_letter_word(word_list)
+        elif not ten_letter_word_in_tie and not all_same_length:
+            best_word = get_shortest_word(tied_words)
 
-        elif not words_same_length and not ten_letter_word_present:
-            best_word = get_shortest_word(word_list)
 
     return best_word, leaderboard[best_word]

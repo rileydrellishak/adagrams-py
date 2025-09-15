@@ -1,0 +1,33 @@
+def get_highest_word_score(word_list):
+    leaderboard = create_leaderboard(word_list)
+    scores = list(leaderboard.values())
+
+    best_word = word_list[0]
+    highest_score = scores[0]
+
+    tie_for_high_score = check_for_high_score_tie(scores)
+    words_same_length = check_for_all_same_length(word_list)
+    ten_letter_word_present = check_for_ten_letter_word(word_list)
+
+    if (not tie_for_high_score) and (not words_same_length):
+        highest_score = find_maximum_score(scores)
+        if scores.count(highest_score) > 1:
+            # If there is a tie for highest score, 
+            # then winner depends on length
+            best_word = highest_score_depends_on_word_length(word_list)
+        else:
+            index_highest_score = scores.index(highest_score)
+            best_word = word_list[index_highest_score]
+
+
+    elif (tie_for_high_score):
+        if words_same_length and ten_letter_word_present:
+            best_word = word_list[0]
+
+        elif not words_same_length and ten_letter_word_present:
+            best_word = find_first_ten_letter_word(word_list)
+
+        elif not words_same_length and not ten_letter_word_present:
+            best_word = get_shortest_word(word_list)
+
+    return best_word, leaderboard[best_word]
