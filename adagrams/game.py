@@ -65,7 +65,7 @@ def letter_pool_as_list():
         none
     
     Returns:
-        list: letter_pool_list (list of strings)
+        list: letter_pool_list (list of strings). Each string is a single capital letter. The number of each capital letter depends on fluency as defined in LETTER_POOL.
     """
     letter_pool_list = []
     for letter, frequency in LETTER_POOL.items():
@@ -101,14 +101,14 @@ def draw_letters():
     return tiles
 
 def uses_available_letters(word, letter_bank):
-    """Checks if a word only uses letters from a player's letter bank.
+    """Checks if a player-submitted word only uses letters from the player's letter bank.
 
     Args:
         word (str): The word submitted by the player.
         letter_bank (list): The list of letters the player has from drawing 10 tiles.
 
     Returns:
-        bool: True if all letters are from letter pool selected. False if not.
+        bool: True if all letters in the submitted word are from letter pool. False if not. Will also return False if a letter's frequency in the word is greater than its frequency in the letter_bank.
     """
     capitalize_word = word.upper()
     for letter in capitalize_word:
@@ -144,7 +144,7 @@ def create_leaderboard(word_list):
         word_list (list): List of words submitted by player.
 
     Returns:
-        dictionary: leaderboard, where keys are the words and their values are the scores.
+        dictionary: leaderboard, where keys-value pairs are submitted words (str) and their scores (int).
     """
     leaderboard = {}
 
@@ -173,7 +173,8 @@ def check_for_high_score_tie(highest_score, scores):
     """Determines if there is a tie for highest score.
 
     Args:
-        scores (list): A list of scores the player has achieved.
+        highest_score (int): The maximum value in a list of scores.
+        scores (list): A list of scores (int) the player has achieved.
 
     Returns:
         bool: True if there is a tie for maximum score, False if the maximum score is a unique value.
@@ -223,8 +224,10 @@ def tied_words_stats(tied_words):
         if len(tied_words[i]) == 10 and stats["first_ten_letter_word"] == None:
             stats["first_ten_letter_word"] = tied_words[i]
             return stats
+        
         elif len(tied_words[i]) > len(stats["longest_word"]):
             stats["longest_word"] = tied_words[i]
+            
         elif len(tied_words[i]) < len(stats["shortest_word"]):
             stats["shortest_word"] = tied_words[i]
     
