@@ -129,7 +129,7 @@ def score_word(word):
         int: score of word based on scoring guidelines for each letter.
     """
     score = 0
-    if len(word) >= 7:
+    if len(word) >= 7 and len(word) <= 10:
         score += 8
     
     for letter in word.upper():
@@ -289,15 +289,38 @@ def get_highest_word_score(word_list):
         tied_words = get_tied_words(highest_score, leaderboard)
 
         ten_letter_word_in_tie = check_for_ten_letter_word(tied_words)
-        all_same_length = check_for_all_same_length(tied_words)
 
         if ten_letter_word_in_tie:
             best_word = find_first_ten_letter_word(tied_words)
 
-        elif not ten_letter_word_in_tie and all_same_length:
-            best_word = tied_words[0]
-
         else:
-            best_word = get_shortest_word(tied_words)
+            all_same_length = check_for_all_same_length(tied_words)
+
+            if all_same_length:
+                best_word = tied_words[0]
+
+            else:
+                best_word = get_shortest_word(tied_words)
 
     return best_word, leaderboard[best_word]
+
+def tied_words_stats(tied_words):
+    stats = {
+        "shortest_word": tied_words[0],
+        "longest_word": tied_words[0],
+        "first_ten_letter_word": None
+    }
+    if len(tied_words[0]) == 10:
+        stats["first_ten_letter_word"] = tied_words[0]
+        return stats["first_ten_letter_word"]
+
+    for i in range(1, len(tied_words)):
+        if len(tied_words[i]) == 10 and stats["first_ten_letter_word"] == None:
+            stats["first_ten_letter_word"] = tied_words[i]
+            return stats["first_ten_letter_word"]
+        elif len(tied_words[i]) > len(stats["longest_word"]):
+            stats["longest_word"] = tied_words[i]
+        elif len(tied_words[i]) < len(stats["shortest_word"]):
+            stats["shortest_word"] = tied_words[i]
+    
+    return stats
