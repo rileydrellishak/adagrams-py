@@ -183,70 +183,6 @@ def check_for_high_score_tie(highest_score, scores):
     else:
         return False
 
-def check_for_all_same_length(word_list):
-    """Determines if words are the same length. Use only if there is a tie for highest score.
-
-    Args:
-        words (list): A list of words submitted by the player.
-
-    Returns:
-        bool: True if the highest score word has same length as other words it is tied with for highest score.
-    """
-    lengths = []
-
-    for word in word_list:
-        lengths.append(len(word))
-
-    if lengths.count(lengths[0]) == len(lengths):
-        return True
-    
-    return False
-
-def check_for_ten_letter_word(word_list):
-    """Determines if there is a ten letter word in the list of words.
-
-    Args:
-        words (list): A list of words submitted by the player.
-
-    Returns:
-        bool: True if there is at least one ten letter word, False if no ten letter words exist in the list.
-    """
-    for word in word_list:
-        if len(word) == 10:
-            return True
-        
-    return False
-
-def find_first_ten_letter_word(word_list):
-    """When there is a tie among scores and multiple ten letter words that are tied for first, selects the first ten letter word from the word_list.
-
-    Args:
-        word_list
-    
-    Returns:
-        str: word. Returns the first word in the list that has a length of 10 letters.
-    """
-    for word in word_list:
-        if len(word) == 10:
-            return word
-
-def get_shortest_word(word_list):
-    """Determining the shortest word in the list of words.
-
-    Args:
-        word_list (list): List of words the player has submitted.
-    
-    Returns
-        str: shortest_word. The string with the shortest length in the word_list.
-    """
-
-    shortest_word = word_list[0]
-    for word in word_list:
-        if len(word) < len(shortest_word):
-            shortest_word = word
-
-    return shortest_word
-
 def get_tied_words(highest_score, leaderboard):
     """Creates a list of the words that are tied for highest score.
 
@@ -264,6 +200,35 @@ def get_tied_words(highest_score, leaderboard):
             tied_words.append(word)
 
     return tied_words
+
+def tied_words_stats(tied_words):
+    """Gets shortest word, longest word, and first ten letter word from a list of words with tied scores.
+
+    Args:
+        tied_words (list): A list of words with equal scores.
+
+    Returns
+        dict: stats. Returns dictionary with descriptors as keys and words as values. If there is a ten letter word in the tied_words list, the shortest and longest words will not be accurate since the first ten letter word is the tie breaker. If there is no ten letter word, the shortest and longest words are accurate.
+    """
+    stats = {
+        "shortest_word": tied_words[0],
+        "longest_word": tied_words[0],
+        "first_ten_letter_word": None
+    }
+    if len(tied_words[0]) == 10:
+        stats["first_ten_letter_word"] = tied_words[0]
+        return stats
+
+    for i in range(1, len(tied_words)):
+        if len(tied_words[i]) == 10 and stats["first_ten_letter_word"] == None:
+            stats["first_ten_letter_word"] = tied_words[i]
+            return stats
+        elif len(tied_words[i]) > len(stats["longest_word"]):
+            stats["longest_word"] = tied_words[i]
+        elif len(tied_words[i]) < len(stats["shortest_word"]):
+            stats["shortest_word"] = tied_words[i]
+    
+    return stats
 
 def get_highest_word_score(word_list):
     """Determines the highest scoring word from a list of words, accounting for all tie breaking conditions.
@@ -288,39 +253,17 @@ def get_highest_word_score(word_list):
     else:
         tied_words = get_tied_words(highest_score, leaderboard)
 
-        ten_letter_word_in_tie = check_for_ten_letter_word(tied_words)
+        tied_stats = tied_words_stats(tied_words)
 
-        if ten_letter_word_in_tie:
-            best_word = find_first_ten_letter_word(tied_words)
+        if tied_stats["first_ten_letter_word"] is not None:
+            best_word = tied_stats["first_ten_letter_word"]
 
         else:
-            all_same_length = check_for_all_same_length(tied_words)
 
-            if all_same_length:
+            if tied_stats["shortest_word"] == tied_stats["longest_word"]:
                 best_word = tied_words[0]
 
             else:
-                best_word = get_shortest_word(tied_words)
+                best_word = tied_stats["shortest_word"]
 
     return best_word, leaderboard[best_word]
-
-def tied_words_stats(tied_words):
-    stats = {
-        "shortest_word": tied_words[0],
-        "longest_word": tied_words[0],
-        "first_ten_letter_word": None
-    }
-    if len(tied_words[0]) == 10:
-        stats["first_ten_letter_word"] = tied_words[0]
-        return stats["first_ten_letter_word"]
-
-    for i in range(1, len(tied_words)):
-        if len(tied_words[i]) == 10 and stats["first_ten_letter_word"] == None:
-            stats["first_ten_letter_word"] = tied_words[i]
-            return stats["first_ten_letter_word"]
-        elif len(tied_words[i]) > len(stats["longest_word"]):
-            stats["longest_word"] = tied_words[i]
-        elif len(tied_words[i]) < len(stats["shortest_word"]):
-            stats["shortest_word"] = tied_words[i]
-    
-    return stats
