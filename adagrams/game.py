@@ -87,14 +87,12 @@ def draw_letters():
         list: tiles (list of strings)
     """
     tiles = []
-
     while len(tiles) < 10:
         random_index = randint(0, MAX_INDEX_LETTER_LIST)
         letter = STARTING_LETTER_LIST[random_index]
 
         if tiles.count(letter) < LETTER_POOL[letter]:
             tiles.append(letter)
-
         else:
             continue
 
@@ -147,7 +145,6 @@ def create_leaderboard(word_list):
         dictionary: leaderboard, where keys-value pairs are submitted words (str) and their scores (int).
     """
     leaderboard = {}
-
     for word in word_list:
         leaderboard[word] = score_word(word)
 
@@ -181,8 +178,8 @@ def check_for_high_score_tie(highest_score, scores):
     """
     if scores.count(highest_score) > 1:
         return True
-    else:
-        return False
+    
+    return False
 
 def get_tied_words(highest_score, leaderboard):
     """Creates a list of the words that are tied for highest score.
@@ -195,7 +192,6 @@ def get_tied_words(highest_score, leaderboard):
         list: tied_words. A list of all the words that have the same score and the score is the maximum score.
     """
     tied_words = []
-
     for word in leaderboard.keys():
         if leaderboard[word] == highest_score:
             tied_words.append(word)
@@ -247,25 +243,19 @@ def get_highest_word_score(word_list):
     highest_score = find_maximum_score(scores)
 
     tie_for_highest_score = check_for_high_score_tie(highest_score, scores)
-
     if not tie_for_highest_score:
         for word, score in leaderboard.items():
             if score == highest_score:
                 best_word = word
-    
     else:
         tied_words = get_tied_words(highest_score, leaderboard)
-
         tied_stats = tied_words_stats(tied_words)
 
         if tied_stats["first_ten_letter_word"] is not None:
             best_word = tied_stats["first_ten_letter_word"]
-
         else:
-
             if tied_stats["shortest_word"] == tied_stats["longest_word"]:
                 best_word = tied_words[0]
-
             else:
                 best_word = tied_stats["shortest_word"]
 
