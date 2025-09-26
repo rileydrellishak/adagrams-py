@@ -20,7 +20,6 @@ def letter_pool_as_list():
     }
     letter_pool_list = []
     for letter, frequency in LETTER_POOL.items():
-        # Changed i to _ to signal that the loop runs x amount of times since variable i was not utilized
         for _ in range(0, frequency): 
             letter_pool_list.append(letter)
 
@@ -49,6 +48,12 @@ def draw_letters():
 
     return tiles
 
+def build_frequency_map(word):
+    letter_frequency = {}
+    for letter in word:
+        letter_frequency[letter] = letter_frequency.get(letter, 0) + 1
+    return letter_frequency
+    
 def uses_available_letters(word, letter_bank):
     """Checks if a player-submitted word only uses letters from the player's letter bank.
 
@@ -60,12 +65,12 @@ def uses_available_letters(word, letter_bank):
         bool: True if all letters in the submitted word are from letter pool. False if not. Will also return False if a letter's frequency in the word is greater than its frequency in the letter_bank.
     """
     capitalize_word = word.upper()
+    word_letter_frequency = build_frequency_map(capitalize_word)
+    letter_bank_frequency = build_frequency_map(letter_bank)
     for letter in capitalize_word:
-        if letter not in letter_bank:
+        if letter not in letter_bank_frequency.keys() or word_letter_frequency[letter] > letter_bank_frequency[letter]:
             return False
-        else:
-            if capitalize_word.count(letter) > letter_bank.count(letter):
-                return False
+        
     return True
 
 def score_word(word):
