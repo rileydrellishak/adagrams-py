@@ -100,7 +100,7 @@ def score_word(word):
 
     return score
 
-def get_words_tied_for_highest_score(word_list):
+def get_tied_words(word_list):
     """Finds maximum score from a list of words and returns a list of words with the same score.
 
     Args:
@@ -110,16 +110,16 @@ def get_words_tied_for_highest_score(word_list):
         words_tied_for_highest: List of strings representing words the player has submitted that tie for highest score.
     """
     highest_score = 0
-    words_tied_for_highest = []
+    tied_words = []
     for word in word_list:
         if score_word(word) > highest_score:
             highest_score = score_word(word)
 
     for word in word_list:
         if score_word(word) == highest_score:
-            words_tied_for_highest.append(word)
+            tied_words.append(word)
     
-    return words_tied_for_highest
+    return tied_words
 
 def get_highest_word_score(word_list):
     """Determines the highest scoring word from a list of words, accounting for all tie breaking conditions.
@@ -130,13 +130,13 @@ def get_highest_word_score(word_list):
     Returns:
         tuple: winning word, score of winning word.
     """
-    tied_for_highest_score = get_words_tied_for_highest_score(word_list)
+    tied_words = get_tied_words(word_list)
 
-    if len(tied_for_highest_score) == 1:
-        return tied_for_highest_score[0], score_word(tied_for_highest_score[0])
+    if len(tied_words) == 1:
+        return tied_words[0], score_word(tied_words[0])
 
-    shortest_word = tied_for_highest_score[0]
-    for word in tied_for_highest_score:
+    shortest_word = tied_words[0]
+    for word in tied_words:
         if len(word) == 10:
             return word, score_word(word)
         else:
