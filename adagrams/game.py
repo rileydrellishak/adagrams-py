@@ -128,7 +128,7 @@ def get_highest_word_score(word_list):
         word_list (list): List of words the player has submitted.
     
     Returns:
-        tuple: best_word, leaderboard[best_word] (score). Finds best_word key in the leaderboard and returns the key and its value.
+        tuple: winning word, score of winning word.
     """
     tied_for_highest_score = get_words_tied_for_highest_score(word_list)
 
