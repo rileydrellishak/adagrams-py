@@ -100,6 +100,27 @@ def score_word(word):
 
     return score
 
+def get_words_tied_for_highest_score(word_list):
+    """Finds maximum score from a list of words and returns a list of words with the same score.
+
+    Args:
+        word_list: List of strings representing words the player has submitted.
+    
+    Returns:
+        words_tied_for_highest: List of strings representing words the player has submitted that tie for highest score.
+    """
+    highest_score = 0
+    words_tied_for_highest = []
+    for word in word_list:
+        if score_word(word) > highest_score:
+            highest_score = score_word(word)
+
+    for word in word_list:
+        if score_word(word) == highest_score:
+            words_tied_for_highest.append(word)
+    
+    return words_tied_for_highest
+
 def create_leaderboard(word_list):
     """Creates a dictionary of words and their respective scores.
 
